@@ -20,7 +20,7 @@ ENV ROOTSYS /usr/local/bin/root
 RUN apt-get -y update && sudo apt-get install -y wget
 RUN wget https://bootstrap.pypa.io/get-pip.py
 RUN sudo python get-pip.py
-RUN sudo pip install jupyter
+RUN sudo pip install jupyter metakernel zmq
 
 # lz4
 RUN mkdir software && cd software \
@@ -38,3 +38,23 @@ RUN git clone https://github.com/dglazier/HASPECT6 \
 && cd HASPECT6 \
 && git checkout experiments
 RUN cp $HSCODE/rootrc /root/.rootrc
+
+# Create a user that does not have root privileges 
+ARG username=physicist
+RUN userdel builder && useradd --create-home --home-dir /home/${username} ${username}
+ENV HOME /home/${username}
+
+WORKDIR /home/${username}
+
+# Create the configuration file for jupyter and set owner
+RUN echo "c.NotebookApp.ip = '0.0.0.0'" > jupyter_notebook_config.py && chown ${username} *
+
+# Switch to our newly created user
+USER ${username}
+
+# Allow incoming connections on port 8888
+EXPOSE 8888
+
+# Start root
+CMD ["root", "--notebook"]
+
