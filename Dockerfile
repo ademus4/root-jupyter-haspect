@@ -43,6 +43,7 @@ RUN cp $HSCODE/rootrc /root/.rootrc
 ARG username=physicist
 RUN userdel builder && useradd --create-home --home-dir /home/${username} ${username}
 ENV HOME /home/${username}
+RUN cp $HSCODE/rootrc /home/${username}/.rootrc
 
 WORKDIR /home/${username}
 
