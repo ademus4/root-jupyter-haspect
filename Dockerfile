@@ -9,9 +9,12 @@ ENV DISPLAY localhost:0.0
 ENV ROOTSYS /usr/local/bin/root
 
 # install python dependancies and extra software
-RUN yum install -y python34-setuptools nano
-RUN easy_install-3.4 pip
-RUN pip3 install jupyter metakernel zmq ipython
+RUN yum install -y python-setuptools nano
+RUN easy_install pip
+RUN pip install jupyter metakernel zmq ipython
+
+# setting up the root kernal with jupyter
+RUN cp -r /usr/local/etc/root/notebook/kernels/root /usr/share/jupyter/kernels/
 
 # set haspect env   # update these!!
 ENV HSCODE /work/HASPECT6
