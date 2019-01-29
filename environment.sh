@@ -1,3 +1,4 @@
+source /usr/local/bin/thisroot.sh
 export DISPLAY=localhost:0.0
 export ROOTSYS=/usr/local/bin/root
 
