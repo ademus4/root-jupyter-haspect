@@ -1,7 +1,7 @@
 FROM ademus4/root-6-14:latest
 USER root
 WORKDIR /work
-COPY . /work
+ENV HOME /work
 
 # set environment variables
 ## root
@@ -32,16 +32,19 @@ RUN git clone https://github.com/dglazier/HASPECT6 \
 && cd HASPECT6 \
 && git checkout experiments
 
+# important paths for HASPECT and ROOT
 RUN cp $HSCODE/rootrc .rootrc
 
 # Allow incoming connections on port 8888
 EXPOSE 8888
 
-# should run root --hsexp?? then all library files are built, no need for user to have permission to compile themselves
-# also faster for the user (slower for build)
-
+# compile common haspect code ready for user
 RUN root --hsexp
 
 # general environment variables
-ADD environment.sh /etc/profile.d
-ADD jupyter_notebook_config.py /work/
+ADD environment.sh .bashrc
+RUN mkdir /work/.jupyter/
+ADD jupyter_notebook_config.py /work/.jupyter/
+
+# make sure the work directory can be modified by any user
+RUN chmod -R 777 /work
