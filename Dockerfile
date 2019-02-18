@@ -1,61 +1,50 @@
-FROM rootproject/root-ubuntu16:latest
+FROM ademus4/root-6-14:latest
 USER root
 WORKDIR /work
-COPY . /work
+ENV HOME /work
 
 # set environment variables
-## haspect
-ENV HSCODE /work/HASPECT6
-ENV HSANA /work/HASPECT6/HaSpect
-ENV HSEXP $HSCODE/hsexperiments/clas12
-ENV RHIPO /work/HASPECT6/ExtraPackages/rhipo3
-ENV CHIPO /work/software/hipo/libcpp
-ENV LD_LIBRARY_PATH /work/software/lz4/lib
-ENV LZ4_h /work/software/lz4/lib
 ## root
 ENV DISPLAY localhost:0.0
 ENV ROOTSYS /usr/local/bin/root
 
-# install python dependancies
-RUN apt-get -y update && sudo apt-get install -y wget
-RUN wget https://bootstrap.pypa.io/get-pip.py
-RUN sudo python get-pip.py
-RUN sudo pip install jupyter metakernel zmq
+# install python dependancies and extra software
+RUN yum install -y python-setuptools nano
+RUN easy_install pip
+RUN pip install jupyter metakernel zmq ipython
 
-# lz4
-RUN mkdir software && cd software \
-&& git clone https://github.com/lz4/lz4.git \
-&& cd lz4 \
-&& make && sudo make install
+# setting up the root kernal with jupyter
+RUN cp -r /usr/local/etc/root/notebook/kernels/root /usr/share/jupyter/kernels/
+
+# set haspect env   # update these!!
+ENV HSCODE /work/HASPECT6
+ENV HSEXP $HSCODE/hsexperiments/clastools
+ENV CLAS12TOOL /work/Clas12Tool/
 
 # HIPO
-RUN cd software \
-&& wget http://nuclear.gla.ac.uk/~adamt/software/hipo.zip \
-&& unzip hipo.zip
+RUN git clone --recurse-submodules https://github.com/dglazier/Clas12Tool.git \
+&& cd Clas12Tool \
+&& git checkout mesonex
+RUN cd Clas12Tool/Lz4 && make
 
 # install HASPECT
 RUN git clone https://github.com/dglazier/HASPECT6 \
 && cd HASPECT6 \
 && git checkout experiments
-RUN cp $HSCODE/rootrc /root/.rootrc
 
-# Create a user that does not have root privileges 
-ARG username=physicist
-RUN userdel builder && useradd --create-home --home-dir /home/${username} ${username}
-ENV HOME /home/${username}
-RUN cp $HSCODE/rootrc /home/${username}/.rootrc
-
-WORKDIR /home/${username}
-
-# Create the configuration file for jupyter and set owner
-RUN echo "c.NotebookApp.ip = '0.0.0.0'" > jupyter_notebook_config.py && chown ${username} *
-
-# Switch to our newly created user
-USER ${username}
+# important paths for HASPECT and ROOT
+RUN cp $HSCODE/rootrc .rootrc
 
 # Allow incoming connections on port 8888
 EXPOSE 8888
 
-# Start root
-CMD ["root", "--notebook"]
+# compile common haspect code ready for user
+RUN root --hsexp
 
+# general environment variables
+ADD environment.sh .bashrc
+RUN mkdir /work/.jupyter/
+ADD jupyter_notebook_config.py /work/.jupyter/
+
+# make sure the work directory can be modified by any user
+RUN chmod -R 777 /work
