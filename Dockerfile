@@ -21,10 +21,10 @@ ENV HSCODE /work/HASPECT6
 ENV HSEXP $HSCODE/hsexperiments/clastools
 ENV CLAS12TOOL /work/Clas12Tool/
 
-# HIPO
+# clas12tools
 RUN git clone --recurse-submodules https://github.com/dglazier/Clas12Tool.git \
 && cd Clas12Tool \
-&& git checkout mesonex
+&& git checkout proof
 RUN cd Clas12Tool/Lz4 && make
 
 # install HASPECT
@@ -40,6 +40,8 @@ EXPOSE 8888
 
 # compile common haspect code ready for user
 RUN root --hsexp
+RUN root -l $CLAS12TOOL/RunRoot/importToROOT.C
+RUN root -l $CLAS12TOOL/RunRoot/hiporoot/LoadHipoROOT.C
 
 # general environment variables
 ADD environment.sh .bashrc
