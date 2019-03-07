@@ -1,10 +1,12 @@
 # root-jupyter-haspect
 Docker container with ROOT, Jupyter and HASPECT
 
+https://github.com/ademus4/root-jupyter-haspect/tree/hsfit
+
 ## Instructions on using the CLAS12Tool Docker container
 These are instructions on how to run and perform basic analysis of CLAS12 data using the CLAS12Tool software hosted within a dedicated Docker container.
 
-Firstly the docker images needs to be pulled from Dockerhub:
+Firstly the docker images needs to be pulled from Dockerhub. For this exercise the "hsfit" tag will be used:
 
 ```
 docker pull ademus4/root-jupyter-haspect:hsfit
@@ -26,8 +28,9 @@ However there are a few options that are needed/useful in doing practical work f
 
 https://docs.docker.com/engine/reference/commandline/run/
 
-Aan example of starting up the container on a linux machine (ubuntu) may look like the following:
+An example of starting up the container on a linux machine (ubuntu) may look like the following:
 
+```
 #!/usr/bin/env bash
 docker run -it --rm \
     -v /home/adam/uni/:/local_work/ \
@@ -36,6 +39,7 @@ docker run -it --rm \
     --user $(id -u):$(id -g) \
     ademus4/root-jupyter-haspect:hsfit \
     bash
+```
 
 Change the paths for the volume parameter to match somewhere useful. The parameters for the user are to match the current users ID and group ID. The last command points to the name of the docker container to be used, if it doesn’t exist on the host machine it will be downloaded at this point. 
 
@@ -60,7 +64,7 @@ In order to run the examples, some data is required! This can be found either on
 /work/clas12/jnp/clas_004152.recon.hipo
 ```
 
-This should be put somewhere accessible by the container using the volume parameter. Once the container is running (script above) start a jupyter notebook instance:
+This should be put somewhere accessible by the container using the volume parameter. In the meanwhile run the container (script above) and start a jupyter notebook instance:
 
 ```
 jupyter notebook
