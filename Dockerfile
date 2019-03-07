@@ -30,7 +30,7 @@ RUN cd Clas12Tool/Lz4 && make
 # install HASPECT
 RUN git clone https://github.com/dglazier/HASPECT6 \
 && cd HASPECT6 \
-&& git checkout experiments
+&& git checkout hsfit
 
 # important paths for HASPECT and ROOT
 RUN cp $HSCODE/rootrc .rootrc
