@@ -34,7 +34,7 @@ An example of starting up the container on a linux machine (ubuntu) may look lik
 #!/usr/bin/env bash
 docker run -it --rm \
     -v /home/adam/uni/:/local_work/ \
-    -w /work/Clas12Tool/RunRoot/ \
+    -w /work/Clas12Tool/RunRoot/jupy/ \
     -p 8888:8888 \
     --user $(id -u):$(id -g) \
     ademus4/root-jupyter-haspect:hsfit \
@@ -55,7 +55,7 @@ You should be able to run a jupyter notebook at this point:
 jupyter notebook
 ```
 
-And this will be accessible from a browser at http://0.0.0.0:8888 (you may need to copy the token ID from the terminal to the browser).
+And this will be accessible from a browser at http://0.0.0.0:8888 (you will need to copy the token ID from the terminal to the browser).
 
 Runnings some examples
 In order to run the examples, some data is required! This can be found either on the Jlab work disk:
@@ -70,5 +70,9 @@ This should be put somewhere accessible by the container using the volume parame
 jupyter notebook
 ```
 
-Within the subfolder “jupy” are a number of notebooks to run to plot events from the data above. The path will need to be adjusted to wherever the files are stored locally. Remember all changes within the container will not be saved, only changes made on the mounted volumes will persist. 
+In the working directory (set above) are a number of notebooks to run to plot events from the data. The path will need to be adjusted to wherever the files are stored locally. Remember all changes within the container will not be saved, only changes made on the mounted volumes will persist. 
 
+```
+CLAS12Reader3Pi.ipynb
+HipoDraw.ipynb
+```
