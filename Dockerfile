@@ -14,6 +14,14 @@ ENV PATH="$PATH:$CLAS12ROOT/bin"
 # make cmake3 the default
 RUN ln -s cmake3 /usr/bin/cmake
 
+# install python dependancies and extra software
+RUN yum install -y python-setuptools
+RUN easy_install pip
+RUN pip install jupyter metakernel zmq ipython
+
+# setting up the root kernal with jupyter
+RUN cp -r /usr/local/etc/root/notebook/kernels/root /usr/share/jupyter/kernels/
+
 # get CLAS12ROOT
 RUN git clone --recurse-submodules https://github.com/dglazier/clas12root.git \
 && cd clas12root \
@@ -30,6 +38,14 @@ RUN cp HASPECT6/rootrc .rootrc
 
 # compile common haspect code ready for user
 RUN root --hsexp
+
+# Allow incoming connections on port 8888
+EXPOSE 8888
+
+# general environment variables
+ADD environment.sh .bashrc
+RUN mkdir /work/.jupyter/
+ADD jupyter_notebook_config.py /work/.jupyter/
 
 # make sure the work directory can be modified by any user
 RUN chmod -R 777 /work
