@@ -67,6 +67,8 @@ ADD jupyter_notebook_config.py /work/.jupyter/
 # make sure the work directory can be modified by any user
 RUN chmod -R 777 /work
 
-# run novnc server
-COPY . /app
-CMD ["/app/entrypoint.sh"]
+# run novnc server, run the first script in container to start novnc server
+COPY . /work/
+
+# default command is to run jupyter notebook
+CMD ["jupyter notebook"]
