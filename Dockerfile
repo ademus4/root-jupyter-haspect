@@ -11,11 +11,13 @@ ENV USE_HIPO4 1
 ENV HSFINAL 1
 ENV PATH="$PATH:$CLAS12ROOT/bin"
 
+# make cmake3 the default
+RUN ln -s cmake3 /usr/bin/cmake
+
 # get CLAS12ROOT
 RUN git clone --recurse-submodules https://github.com/dglazier/clas12root.git \
 && cd clas12root \
-#&& git checkout 2857a32112a238aa1e7fc0de8d214a88be86dbed \
-&& git checkout cmake3 \
+&& git checkout master \
 && ./installC12Root
 
 # install HASPECT
